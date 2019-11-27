@@ -1,0 +1,174 @@
+// HelloSFML.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "pch.h"
+#include <iostream>
+#include <SFML/Graphics.hpp>
+
+//use a namespace to reduce the amount of code required/make life easier
+using namespace sf;
+
+int main()
+{
+	// Create a video mode object using SFML
+	VideoMode vm(1920, 1080);
+
+	// Create and open a window for the game unsing SFML
+	RenderWindow window(vm, "Timber!!!", Style::Fullscreen);
+	
+	//Create a Texture to hold a grahpic on the GPU using SFML
+	Texture textureBackground;
+
+	// Load a graphic into the texture
+	textureBackground.loadFromFile("graphics/background.png");
+
+	// Create a Sprite
+	Sprite spriteBackground;
+
+	// Attach the texture to the sprite
+	spriteBackground.setTexture(textureBackground);
+
+	// Set the spriteBackground to cover the screen
+	spriteBackground.setPosition(0, 0);
+
+	// Make the treee sprite
+	Texture textureTree;
+	textureTree.loadFromFile("graphics/tree.png");
+	Sprite spriteTree;
+	spriteTree.setTexture(textureTree);
+	spriteTree.setPosition(810, 0);
+
+	// Prepare the bee
+	Texture textureBee;
+	textureBee.loadFromFile("graphics/bee.png");
+	Sprite spriteBee;
+	spriteBee.setTexture(textureBee);
+	spriteBee.setPosition(0, 800);
+	// Is it moving?
+	bool beeActive = false;
+	//How fast can the bee fly
+	float beeSpeed = 0.0f;
+
+	// make 3 cloud sprites from 1 texture
+	Texture textureCloud;
+	// Load 1 new texture
+	textureCloud.loadFromFile("graphics/cloud.png");
+	// create 3 colud sprites
+	Sprite spriteCloud1;
+	Sprite spriteCloud2;
+	Sprite spriteCloud3;
+	spriteCloud1.setTexture(textureCloud);
+	spriteCloud2.setTexture(textureCloud);
+	spriteCloud3.setTexture(textureCloud);
+	// Position the clouds off screen
+	spriteCloud1.setPosition(0, 0);
+	spriteCloud2.setPosition(0, 250);
+	spriteCloud3.setPosition(0, 500);
+	// Are the clouds currently on the screen?
+	bool cloud1Active = false;
+	bool cloud2Active = false;
+	bool cloud3Active = false;
+	//How fast is each cloud?
+	float cloud1Speed = 0.0f;
+	float cloud2Speed = 0.0f;
+	float cloud3Speed = 0.0f;
+
+	// Time handling
+	Clock clock;
+
+	while (window.isOpen())
+	{
+		/*
+		Handle Player input
+		*/
+		if (Keyboard::isKeyPressed(Keyboard::Escape))
+		{
+			window.close();
+		}
+		/*
+		Upate the scene
+		*/
+
+		// Measure time
+		Time dt = clock.restart();
+
+		// Setup the Bee
+		if (!beeActive)
+		{
+			// How fast is the bee
+			srand((int)time(0) * 10);
+			beeSpeed = (rand() % 200) + 200;
+
+			// How high is the bee
+			srand((int)time(0) * 10);
+			float height = (rand() % 500) + 500;
+			spriteBee.setPosition(2000, height);
+			beeActive = true;
+
+		}
+		else // Move the Bee
+		{
+			spriteBee.setPosition(spriteBee.getPosition().x - (beeSpeed * dt.asSeconds()), spriteBee.getPosition().y);
+
+			// Has the bb reached the right hand edge
+			if (spriteBee.getPosition().x < -100);
+			{
+				beeActive = false;
+			}
+		}
+		// Mange the clouds
+		//cloud 1
+		if (!cloud1Active)
+		{
+			// how fast is the cloud
+			srand((int)time(0) * 100);
+			cloud1Speed = (rand() % 200);
+
+			// How high is the cloud
+			srand((int)time(0) * 10);
+			float height = (rand() % 150);
+			spriteCloud1.setPosition(-200, height);
+			cloud1Active = true;
+
+
+		}
+
+
+		/*
+		Draw the scene
+		*/
+
+		// Clear everything from last frame
+		window.clear();
+
+		// Draw our game scene here
+		window.draw(spriteBackground);
+		// Draw the clouds
+		window.draw(spriteCloud1);
+		window.draw(spriteCloud2);
+		window.draw(spriteCloud3);
+
+		// Draw the sprite Tree
+		window.draw(spriteTree);
+
+		// Draw the Bee
+		window.draw(spriteBee);
+
+		// Show everythign we just drew
+		window.display();
+	}
+
+    // std::cout << "Hello World!\n"; 
+	return 0;
+}
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
